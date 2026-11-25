@@ -1,0 +1,51 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('epass_users', function (Blueprint $table): void {
+            $table->uuid('uuid')->primary();
+            $table->string('api_token', 64)->nullable()->unique();
+            $table->timestamp('api_token_expires_at')->nullable();
+            $table->string('document_number_hash')->nullable();
+            $table->string('current_document_number_lookup', 64)->nullable()->index();
+            $table->string('current_mrz_key_lookup', 64)->nullable()->index();
+            $table->string('holder_profile_lookup', 64)->nullable()->index();
+            $table->string('nationality', 20)->nullable();
+            $table->string('gender', 20)->nullable();
+            $table->string('surname')->nullable();
+            $table->string('given_names')->nullable();
+            $table->string('place_of_birth')->nullable();
+            $table->date('birth_date')->nullable();
+            $table->date('current_expiry_date')->nullable();
+            $table->string('device_id')->nullable();
+            $table->timestamp('epass_registered_at')->nullable();
+            $table->unsignedInteger('linked_accounts_count')->default(0);
+            $table->string('passport_identity_hash', 64)->nullable()->unique();
+            $table->text('image_hash')->nullable();
+            $table->string('image_hash_lookup', 64)->nullable()->index();
+            $table->text('encrypted_dek')->nullable();
+            $table->longText('sod_evidence')->nullable();
+            $table->longText('dg1_evidence')->nullable();
+            $table->longText('dg11_evidence')->nullable();
+            $table->longText('sod_verification_record')->nullable();
+            $table->rememberToken();
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        // Intentionally preserved.
+        // The epass_users table is NEVER dropped on rollback.
+        // It contains sensitive passport and identity data that belongs to your users.
+        // If you need to remove this table, run the data export command first:
+        //   php artisan epass:export
+        // Then drop it manually after verifying all accounts work via standard Laravel auth.
+    }
+};
